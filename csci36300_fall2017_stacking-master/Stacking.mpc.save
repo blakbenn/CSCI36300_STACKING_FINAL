@@ -1,0 +1,37 @@
+// Honor Pledge:
+//
+// I pledge that I have neither given nor
+// received any help on this assignment.
+//
+// blakbenn
+
+
+project (Stacking){
+	exename = Stacking
+	
+	specific (make) {
+		compile_flags += -std=c++11
+	}
+
+	Source_Files {
+		driver.cpp
+		Expression_Command_Factory.cpp
+		Add_Command.cpp
+		
+	}
+	Template_Files {
+		BaseArray.cpp
+		Array.cpp
+		Stack.cpp
+	}
+	Header_Files{
+		BaseArray.h
+		Array.h
+		Stack.h
+	}
+	Inline_Files{
+		BaseArray.inl
+		Array.inl
+		Stack.inl
+	}
+}

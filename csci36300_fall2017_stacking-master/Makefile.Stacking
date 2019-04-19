@@ -1,0 +1,106 @@
+#----------------------------------------------------------------------------
+#       Macros
+#----------------------------------------------------------------------------
+CC            = gcc
+CXX           = g++
+LD            = $(CXX) $(CCFLAGS) $(CPPFLAGS)
+AR            = ar
+PICFLAGS      = -fPIC
+CPPFLAGS      = $(PICFLAGS) $(GENFLAGS) -std=c++11 -D_REENTRANT
+OBJEXT        = .o
+OUTPUT_OPTION = -o "$@"
+COMPILE.c     = $(CC) $(CFLAGS) $(CPPFLAGS) -c
+COMPILE.cc    = $(CXX) $(CCFLAGS) $(CPPFLAGS) -c
+LDFLAGS       = -L"."
+CCC           = $(CXX)
+MAKEFILE      = Makefile.Stacking
+DEPENDENCIES  = .depend.$(MAKEFILE)
+BTARGETDIR    = ./
+BIN           = $(BTARGETDIR)Stacking$(EXESUFFIX)$(EXEEXT)
+CAT           = cat
+MV            = mv -f
+RM            = rm -rf
+CP            = cp -p
+NUL           = /dev/null
+MKDIR         = mkdir -p
+TESTDIRSTART  = test -d
+TESTDIREND    = ||
+TOUCH         = touch
+EXEEXT        = 
+LIBPREFIX     = lib
+LIBSUFFIX     = 
+GENFLAGS      = -O
+LDLIBS        = -ldl $(subst lib,-l,$(sort $(basename $(notdir $(wildcard /usr/lib/librt.so /lib/librt.so))))) -lpthread
+OBJS          = driver$(OBJEXT) Abstract_Expression_Command_Factory$(OBJEXT) Stack_Expression_Command_Factory$(OBJEXT) Expression_Command$(OBJEXT) Binary_Operation_Command$(OBJEXT) Add_Command$(OBJEXT) Subtract_Command$(OBJEXT) Multiply_Command$(OBJEXT) Divide_Command$(OBJEXT) Mod_Command$(OBJEXT) Parentheses_Command$(OBJEXT) Integer_Command$(OBJEXT)
+SRC           = driver.cpp Abstract_Expression_Command_Factory.cpp Stack_Expression_Command_Factory.cpp Expression_Command.cpp Binary_Operation_Command.cpp Add_Command.cpp Subtract_Command.cpp Multiply_Command.cpp Divide_Command.cpp Mod_Command.cpp Parentheses_Command.cpp Integer_Command.cpp
+LINK.cc       = $(LD) $(LDFLAGS)
+EXPORTFLAGS   = 
+DEPLIBS       = $(foreach lib, , $(foreach libpath, ., $(wildcard $(libpath)/lib$(lib).a)))
+
+#----------------------------------------------------------------------------
+#       Local targets
+#----------------------------------------------------------------------------
+
+all: $(BIN)
+
+$(BIN): $(OBJS) $(DEPLIBS)
+	@$(TESTDIRSTART) "$(BTARGETDIR)" $(TESTDIREND) $(MKDIR) "$(BTARGETDIR)"
+	$(LINK.cc) $(OBJS) $(LDLIBS) $(OUTPUT_OPTION)
+
+generated: $(GENERATED_DIRTY)
+	@-:
+
+driver$(OBJEXT): driver.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) driver.cpp
+
+Abstract_Expression_Command_Factory$(OBJEXT): Abstract_Expression_Command_Factory.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Abstract_Expression_Command_Factory.cpp
+
+Stack_Expression_Command_Factory$(OBJEXT): Stack_Expression_Command_Factory.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Stack_Expression_Command_Factory.cpp
+
+Expression_Command$(OBJEXT): Expression_Command.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Expression_Command.cpp
+
+Binary_Operation_Command$(OBJEXT): Binary_Operation_Command.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Binary_Operation_Command.cpp
+
+Add_Command$(OBJEXT): Add_Command.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Add_Command.cpp
+
+Subtract_Command$(OBJEXT): Subtract_Command.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Subtract_Command.cpp
+
+Multiply_Command$(OBJEXT): Multiply_Command.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Multiply_Command.cpp
+
+Divide_Command$(OBJEXT): Divide_Command.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Divide_Command.cpp
+
+Mod_Command$(OBJEXT): Mod_Command.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Mod_Command.cpp
+
+Parentheses_Command$(OBJEXT): Parentheses_Command.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Parentheses_Command.cpp
+
+Integer_Command$(OBJEXT): Integer_Command.cpp
+	$(COMPILE.cc) $(EXPORTFLAGS) $(OUTPUT_OPTION) Integer_Command.cpp
+
+clean:
+	-$(RM) $(OBJS)
+
+realclean: clean
+	-$(RM) $(BIN)
+
+check-syntax:
+	$(COMPILE.cc) $(EXPORTFLAGS) -Wall -Wextra -pedantic -fsyntax-only $(CHK_SOURCES)
+
+#----------------------------------------------------------------------------
+#       Dependencies
+#----------------------------------------------------------------------------
+
+
+depend:
+	-$(MPC_ROOT)/depgen.pl  $(CFLAGS) $(CCFLAGS) $(CPPFLAGS) -f $(DEPENDENCIES) $(SRC) 2> $(NUL)
+
+-include $(DEPENDENCIES)
